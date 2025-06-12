@@ -1,0 +1,53 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+```yaml
+final_goal: "https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz を Potree で表示する"
+directory_structure:
+  root:
+    - path: ".nojekyll"
+      description: "GitHub Pages で Jekyll を無効化する空ファイル"
+    - path: "index.html"
+      description: "examples/copc.html をコピーし、CSS/JS への ../ パスを削除して配置"
+    - path: "libs/"
+      description: "Potree が依存する外部ライブラリ (jQuery, three.js, proj4.js など)"
+    - path: "build/potree/"
+      contents:
+        - "potree.js"
+        - "potree.css"
+        - "resources/"
+      description: "Potree のビルド成果物"
+    - path: "workers/"
+      description: "Web Worker スクリプト群"
+    - path: "pointclouds/"
+      contents:
+        - "lion_takanawa.copc.laz"
+        - "lion_takanawa_ept_laz_14/"
+      description: "COPC/EPT データセット"
+steps:
+  - name: "Potree をローカルでビルド"
+    commands:
+      - "git clone https://github.com/potree/potree.git"
+      - "cd potree"
+      - "git tag -l '1.8.*'"
+      - "git checkout tags/1.8.0"
+      - "npm install"
+      - "npm run build"
+  - name: "GitHub Pages 用ディレクトリを準備"
+    actions:
+      - "リポジトリルートに .nojekyll を作成"
+      - "libs/, build/potree/, workers/, pointclouds/ をルートに配置"
+      - "examples/copc.html を index.html にコピーし、パスを修正"
+  - name: "デプロイと動作確認"
+    actions:
+      - "GitHub Pages を main ブランチのルートで有効化"
+      - "potree.js が 200 OK で読み込まれることを確認"
+      - "最終目的の COPC ファイルが Potree で正しく表示されることを確認"
+data_formats:
+  - COPC
+  - EPT
+example_viewer_url: "https://viewer.copc.io/?copc=https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz"
+
+```
