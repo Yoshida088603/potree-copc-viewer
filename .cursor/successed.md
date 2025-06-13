@@ -1,11 +1,7 @@
-# ✅ 最終目的：指定COPCをPotreeでWeb表示した
+# 作業履歴
 
-このドキュメントの最終ゴールは、**「https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz をPotreeでWebブラウザ上に表示した」**ことです。
-
----
-
-## ✅ 結論（2024/06時点の完全動作構成・実績）
-
+## ✅ 結論（20250613時点の完全動作構成・実績）
+「https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz をPotreeでWebブラウザ上に表示した」
 - `examples/copc.html` をリポジトリルートに `index.html` としてコピーした
 - すべてのパス（`<link>`/`<script>`/ESM import）をルート基準に修正した
   - ESM(import)は必ず `./` で始めるようにした（例: `import * as THREE from "./libs/three.js/build/three.module.js";`）
@@ -84,3 +80,31 @@ touch .nojekyll
 - [Potree COPC対応PR](https://github.com/potree/potree/pull/1381)
 - [CORS解説](https://developer.mozilla.org/ja/docs/Web/HTTP/CORS)
 - [GitHub Pagesと.nojekyll](https://docs.github.com/ja/pages/using-jekyll-with-pages/about-jekyll-and-github-pages)
+
+---
+
+## 📝 実施計画と達成履歴（202506142200)
+
+### Potree COPC Viewer 拡張計画（実施済み）
+
+#### 目的（当初計画）
+- UIにID入力ボックスを追加し、任意のCOPCファイル（例: 114112）を表示できるようにした。
+- 表示中のCOPCのリンクをURLクエリパラメータ（?r=xxxx）で共有可能にした。
+- GitHub Pages上で動作する静的Webアプリとして実現した。
+
+#### 実装手順（実施内容）
+1. `index.html`にID入力用のテキストボックスと「表示」ボタンを追加した。
+2. ボタン押下時、入力値からCOPCファイルのURLを生成し、`window.location.search`を書き換えてページをリロードするようにした。
+3. ページロード時、クエリパラメータ`r`があればその値でCOPCを表示するようにした。
+4. 現在表示中のCOPCの共有用URLをUIに表示し、コピーできるようにした。
+5. GitHub Pagesで動作するよう、外部リソースのパスやCORSに注意した。
+
+#### 備考
+- 入力値がURLの場合はそのまま利用し、IDの場合は既定のURLパターンで組み立てるようにした。
+- 共有URLは`?r=xxxx`形式とした。
+- 既存の`getQueryParam`や`path`のロジックを活用した。
+
+##### COPC配信リンクのルール
+- 例えば「104811」というIDが入力された場合、COPCファイルのURLは
+  `https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz`
+  の形式で組み立てて利用した。
