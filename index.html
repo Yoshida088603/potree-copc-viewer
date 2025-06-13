@@ -32,9 +32,12 @@
 	<!-- INCLUDE ADDITIONAL DEPENDENCIES HERE -->
 	<!-- INCLUDE SETTINGS HERE -->
 
-	<!-- 追加: ID入力ボックスとボタン、共有URL表示欄 -->
-	<div id="copc_control" style="position:absolute; top:10px; right:10px; z-index:1000; background:rgba(255,255,255,0.9); padding:10px; border-radius:8px;">
-	  <input type="text" id="copc_id_input" placeholder="COPC IDまたはURL" style="width:200px;">
+	<!-- 右上に使い方リンク追加 -->
+	<a href="https://note.com/yoshida_shirou/n/n61f55a71a56d" target="_blank" style="position:absolute; top:10px; right:10px; z-index:1100; background:rgba(255,255,255,0.95); padding:6px 14px; border-radius:8px; font-weight:bold; text-decoration:none;">使い方</a>
+
+	<!-- ID入力ボックスを右下に移動し、複数行テキストエリア化 -->
+	<div id="copc_control" style="position:absolute; bottom:10px; right:10px; z-index:1000; background:rgba(255,255,255,0.9); padding:10px; border-radius:8px;">
+	  <textarea id="copc_id_input" placeholder="COPC IDまたはURL（複数可：カンマ・改行区切り）" style="width:220px; height:60px;"></textarea>
 	  <button id="copc_load_btn">表示</button>
 	  <br>
 	  <span>共有URL: </span><input type="text" id="copc_share_url" style="width:320px;" readonly>
@@ -64,10 +67,7 @@
 			$("#menu_appearance").next().show();
 		});
 
-        var path = "https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz";
-		var name = "104811";
-
-		var getQueryParam = function(name) {
+		function getQueryParam(name) {
 			name = name.replace(/[\[\]]/g, "\\$&");
 			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
 				results = regex.exec(window.location.href);
@@ -75,60 +75,53 @@
 			return decodeURIComponent(results[2].replace(/\+/g, " "));
 		}
 
-        // 追加: 共有URL表示関数
-        function updateShareUrl(idOrUrl) {
-          let url = new URL(window.location.href);
-          url.searchParams.set('r', idOrUrl);
-          document.getElementById('copc_share_url').value = url.toString();
-        }
+		function updateShareUrl(ids) {
+			let url = new URL(window.location.href);
+			url.searchParams.set('r', ids);
+			document.getElementById('copc_share_url').value = url.toString();
+		}
 
-        // 追加: コピー機能
-        document.getElementById('copc_copy_btn').onclick = function() {
-          let input = document.getElementById('copc_share_url');
-          input.select();
-          input.setSelectionRange(0, 99999);
-          document.execCommand('copy');
-          document.getElementById('copc_copy_msg').style.display = 'inline';
-          setTimeout(()=>{document.getElementById('copc_copy_msg').style.display='none';}, 1200);
-        };
+		document.getElementById('copc_copy_btn').onclick = function() {
+			let input = document.getElementById('copc_share_url');
+			input.select();
+			input.setSelectionRange(0, 99999);
+			document.execCommand('copy');
+			document.getElementById('copc_copy_msg').style.display = 'inline';
+			setTimeout(()=>{document.getElementById('copc_copy_msg').style.display='none';}, 1200);
+		};
 
-        // 追加: ボタン押下時の挙動
-        document.getElementById('copc_load_btn').onclick = function() {
-          let val = document.getElementById('copc_id_input').value.trim();
-          if (!val) return;
-          let url = new URL(window.location.href);
-          url.searchParams.set('r', val);
-          window.location.href = url.toString();
-        };
+		document.getElementById('copc_load_btn').onclick = function() {
+			let val = document.getElementById('copc_id_input').value.trim();
+			if (!val) return;
+			let url = new URL(window.location.href);
+			url.searchParams.set('r', val);
+			window.location.href = url.toString();
+		};
 
-        // 追加: ページロード時、入力欄と共有URLをセット
-        let r = getQueryParam('r');
-        if (r) {
-          document.getElementById('copc_id_input').value = r;
-          updateShareUrl(r);
-        } else {
-          document.getElementById('copc_id_input').value = name;
-          updateShareUrl(name);
-        }
+		// ページロード時、入力欄と共有URLをセット
+		let r = getQueryParam('r');
+		if (r) {
+			document.getElementById('copc_id_input').value = r;
+			updateShareUrl(r);
+		} else {
+			document.getElementById('copc_id_input').value = "104811";
+			updateShareUrl("104811");
+		}
 
-        // 既存のr取得ロジックを活用
-        if (r) {
-            name = r;
-            var http = 'http';
-            if (r.substr(0, http.length) == http) path = name;
-            else path = `https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/${name}.copc.laz`;
-        }
+		// 複数ID対応: カンマ・改行区切りで分割
+		let ids = (r ? r : "104811").split(/[,\n\r]+/).map(s => s.trim()).filter(s => s);
 
-		var c = getQueryParam('c');
-		Potree.loadPointCloud(path, name, function(e){
-			viewer.scene.addPointCloud(e.pointcloud);
-
-			let material = e.pointcloud.material;
-			material.size = 1;
-			material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-			if (c) material.activeAttributeName = c;
-
-			viewer.fitToScreen(0.5);
+		// すべてのID/URLでCOPCを同時表示
+		ids.forEach((id, idx) => {
+			let path = id.match(/^https?:\/\//) ? id : `https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/${id}.copc.laz`;
+			let name = id;
+			Potree.loadPointCloud(path, name, function(e){
+				window.viewer.scene.addPointCloud(e.pointcloud);
+				let material = e.pointcloud.material;
+				material.size = 1;
+				material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+				window.viewer.fitToScreen(0.5);
+			});
 		});
 	</script>
   </body>

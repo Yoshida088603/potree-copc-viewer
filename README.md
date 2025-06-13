@@ -1,4 +1,9 @@
+# Potree COPC Viewer
 
+## 2025/06 アップデート
+- 複数のCOPC ID（カンマ・改行区切り）を一度に入力し、同時に複数点群を表示できるようになりました。
+- ID入力欄が画面右下に移動しました。
+- 画面右上に「使い方」リンク（https://note.com/yoshida_shirou/n/n61f55a71a56d）が追加されました。
 
 # About
 
