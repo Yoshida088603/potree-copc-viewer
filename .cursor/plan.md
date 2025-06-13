@@ -1,86 +1,23 @@
-# ✅ 最終目的：指定COPCをPotreeでWeb表示する
+# Potree COPC Viewer 拡張計画
 
-このドキュメントの最終ゴールは、**「https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz をPotreeでWebブラウザ上に表示する」**ことです。
+## 目的
+- UIにID入力ボックスを追加し、任意のCOPCファイル（例: 114112）を表示できるようにする。
+- 表示中のCOPCのリンクをURLクエリパラメータ（?r=xxxx）で共有可能にする。
+- GitHub Pages上で動作する静的Webアプリとして実現する。
 
----
+## 実装手順
+1. `index.html`にID入力用のテキストボックスと「表示」ボタンを追加する。
+2. ボタン押下時、入力値からCOPCファイルのURLを生成し、`window.location.search`を書き換えてページをリロードする。
+3. ページロード時、クエリパラメータ`r`があればその値でCOPCを表示する。
+4. 現在表示中のCOPCの共有用URLをUIに表示し、コピーできるようにする。
+5. GitHub Pagesで動作するよう、外部リソースのパスやCORSに注意する。
 
-## ✅ 結論（2024/06時点の完全動作構成）
+## 備考
+- 入力値がURLの場合はそのまま利用、IDの場合は既定のURLパターンで組み立てる。
+- 共有URLは`?r=xxxx`形式。
+- 既存の`getQueryParam`や`path`のロジックを活用する。
 
-- `examples/copc.html` をリポジトリルートに `index.html` としてコピー
-- すべてのパス（`<link>`/`<script>`/ESM import）をルート基準に修正
-  - ESM(import)は必ず `./` で始める（例: `import * as THREE from "./libs/three.js/build/three.module.js";`）
-- `libs/`, `build/`, `workers/` をルート直下に配置
-- `.nojekyll` をルートに設置
-- `pointclouds/` は任意（外部URLのCOPC/EPTを使う場合は不要）
-- サブモジュールや入子構造は一切不要
-
----
-
-## 🔧 手順（最短・確実版）
-
-### 1. Potreeをビルド
-
-```bash
-# Node.js 16以上が必要
-node -v
-
-git clone https://github.com/potree/potree.git
-cd potree
-git checkout tags/1.8.0
-npm install
-npm run build
-```
-
-### 2. ディレクトリ構成（GitHub Pages用）
-
-```
-potree-copc-viewer/
-├── .nojekyll
-├── index.html         # ← examples/copc.html をコピーし、パスを修正
-├── libs/
-├── build/
-│   └── potree/
-│       ├── potree.js
-│       ├── potree.css
-│       └── resources/
-├── workers/
-└── pointclouds/       # 任意（外部データ利用時は不要）
-```
-
-### 3. index.html の修正ポイント
-
-- すべてのパスをルート基準に修正（`../` を削除）
-- ESM(import)は必ず `./` で始める
-  - 例: `import * as THREE from "./libs/three.js/build/three.module.js";`
-- COPC/EPTのURLは外部でもローカルでもOK
-
-### 4. .nojekyll の設置
-
-```bash
-touch .nojekyll
-```
-
----
-
-## ⚠️ 注意点
-
-- **CORS**: 外部COPC/EPTファイルはCORS対応必須（`Access-Control-Allow-Origin: *`）
-- **サブモジュール/入子構造はNG**: ルート直下にすべて配置すること
-- **GitHub Pagesの設定**: developやmainなど、公開したいブランチのルートを指定
-
----
-
-## ✅ 成功の確認ポイント
-
-- `https://<username>.github.io/<repo>/` でPotreeビューアが表示される
-- DevToolsで404や猫画像が出ない
-- `potree.js` などが200で読めている
-- 指定COPC（[104811.copc.laz](https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz)）が正しく表示される
-
----
-
-## 📚 参考
-- [Potree GitHub](https://github.com/potree/potree)
-- [Potree COPC対応PR](https://github.com/potree/potree/pull/1381)
-- [CORS解説](https://developer.mozilla.org/ja/docs/Web/HTTP/CORS)
-- [GitHub Pagesと.nojekyll](https://docs.github.com/ja/pages/using-jekyll-with-pages/about-jekyll-and-github-pages)
+### COPC配信リンクのルール
+- 例えば「104811」というIDが入力された場合、COPCファイルのURLは
+  `https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz`
+  の形式で組み立てて利用する。

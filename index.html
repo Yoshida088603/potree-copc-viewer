@@ -32,6 +32,16 @@
 	<!-- INCLUDE ADDITIONAL DEPENDENCIES HERE -->
 	<!-- INCLUDE SETTINGS HERE -->
 
+	<!-- 追加: ID入力ボックスとボタン、共有URL表示欄 -->
+	<div id="copc_control" style="position:absolute; top:10px; left:10px; z-index:1000; background:rgba(255,255,255,0.9); padding:10px; border-radius:8px;">
+	  <input type="text" id="copc_id_input" placeholder="COPC IDまたはURL" style="width:200px;">
+	  <button id="copc_load_btn">表示</button>
+	  <br>
+	  <span>共有URL: </span><input type="text" id="copc_share_url" style="width:320px;" readonly>
+	  <button id="copc_copy_btn">コピー</button>
+	  <span id="copc_copy_msg" style="color:green; display:none;">コピーしました</span>
+	</div>
+
 	<div class="potree_container" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; ">
 		<div id="potree_render_area" style="background-image: url('build/potree/resources/images/background.jpg');"></div>
 		<div id="potree_sidebar_container"> </div>
@@ -65,12 +75,48 @@
 			return decodeURIComponent(results[2].replace(/\+/g, " "));
 		}
 
-        var r = getQueryParam('r');
+        // 追加: 共有URL表示関数
+        function updateShareUrl(idOrUrl) {
+          let url = new URL(window.location.href);
+          url.searchParams.set('r', idOrUrl);
+          document.getElementById('copc_share_url').value = url.toString();
+        }
+
+        // 追加: コピー機能
+        document.getElementById('copc_copy_btn').onclick = function() {
+          let input = document.getElementById('copc_share_url');
+          input.select();
+          input.setSelectionRange(0, 99999);
+          document.execCommand('copy');
+          document.getElementById('copc_copy_msg').style.display = 'inline';
+          setTimeout(()=>{document.getElementById('copc_copy_msg').style.display='none';}, 1200);
+        };
+
+        // 追加: ボタン押下時の挙動
+        document.getElementById('copc_load_btn').onclick = function() {
+          let val = document.getElementById('copc_id_input').value.trim();
+          if (!val) return;
+          let url = new URL(window.location.href);
+          url.searchParams.set('r', val);
+          window.location.href = url.toString();
+        };
+
+        // 追加: ページロード時、入力欄と共有URLをセット
+        let r = getQueryParam('r');
         if (r) {
-			name = r;
+          document.getElementById('copc_id_input').value = r;
+          updateShareUrl(r);
+        } else {
+          document.getElementById('copc_id_input').value = name;
+          updateShareUrl(name);
+        }
+
+        // 既存のr取得ロジックを活用
+        if (r) {
+            name = r;
             var http = 'http';
             if (r.substr(0, http.length) == http) path = name;
-            else path = "../pointclouds/" + name + "/ept.json";
+            else path = `https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/${name}.copc.laz`;
         }
 
 		var c = getQueryParam('c');
