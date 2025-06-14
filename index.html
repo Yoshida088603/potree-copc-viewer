@@ -35,12 +35,14 @@
 	<!-- 右上に使い方リンク追加 -->
 	<a href="https://note.com/yoshida_shirou/n/n61f55a71a56d" target="_blank" style="position:absolute; top:10px; right:10px; z-index:1100; background:rgba(255,255,255,0.95); padding:6px 14px; border-radius:8px; font-weight:bold; text-decoration:none;">使い方</a>
 
-	<!-- ID入力ボックスを右下に移動し、複数行テキストエリア化 -->
+	<!-- ID入力欄・表示ボタンを横並び＆1行化 -->
 	<div id="copc_control" style="position:absolute; bottom:10px; right:10px; z-index:1000; background:rgba(255,255,255,0.9); padding:10px; border-radius:8px;">
-	  <textarea id="copc_id_input" placeholder="COPC IDまたはURL（複数可：カンマ・改行区切り）" style="width:220px; height:60px;"></textarea>
-	  <button id="copc_load_btn">表示</button>
-	  <br>
-	  <span>共有URL: </span><input type="text" id="copc_share_url" style="width:320px;" readonly>
+	  <span>reg_id: </span>
+	  <input type="text" id="copc_id_input" placeholder="COPC IDまたはURL（複数可：カンマ・改行区切り）" style="width:220px; height:28px; vertical-align:middle;">
+	  <button id="copc_load_btn" style="height:32px; vertical-align:middle;">表示</button>
+	  <br><br>
+	  <span>共有URL: </span>
+	  <input type="text" id="copc_share_url" style="width:320px;" readonly>
 	  <button id="copc_copy_btn">コピー</button>
 	  <span id="copc_copy_msg" style="color:green; display:none;">コピーしました</span>
 	</div>
