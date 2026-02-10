@@ -4,7 +4,7 @@ globs:
 alwaysApply: false
 ---
 ```yaml
-final_goal: "https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz を Potree で表示する"
+final_goal: "https://gsvrg.ipri.aist.go.jp/3ddb-pds/copc/104811.copc.laz を Potree で表示する"
 directory_structure:
   root:
     - path: ".nojekyll"
@@ -48,6 +48,6 @@ steps:
 data_formats:
   - COPC
   - EPT
-example_viewer_url: "https://viewer.copc.io/?copc=https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz"
+example_viewer_url: "https://viewer.copc.io/?copc=https://gsvrg.ipri.aist.go.jp/3ddb-pds/copc/104811.copc.laz"
 
 ```

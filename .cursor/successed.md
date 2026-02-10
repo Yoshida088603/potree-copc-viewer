@@ -1,7 +1,7 @@
 # 作業履歴
 
 ## ✅ 結論（20250613時点の完全動作構成・実績）
-「https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz をPotreeでWebブラウザ上に表示した」
+「https://gsvrg.ipri.aist.go.jp/3ddb-pds/copc/104811.copc.laz をPotreeでWebブラウザ上に表示した」
 - `examples/copc.html` をリポジトリルートに `index.html` としてコピーした
 - すべてのパス（`<link>`/`<script>`/ESM import）をルート基準に修正した
   - ESM(import)は必ず `./` で始めるようにした（例: `import * as THREE from "./libs/three.js/build/three.module.js";`）
@@ -71,7 +71,7 @@ touch .nojekyll
 - `https://<username>.github.io/<repo>/` でPotreeビューアが表示された
 - DevToolsで404や猫画像が出なかった
 - `potree.js` などが200で読めていた
-- 指定COPC（[104811.copc.laz](https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz)）が正しく表示された
+- 指定COPC（[104811.copc.laz](https://gsvrg.ipri.aist.go.jp/3ddb-pds/copc/104811.copc.laz)）が正しく表示された
 
 ---
 
@@ -106,5 +106,5 @@ touch .nojekyll
 
 ##### COPC配信リンクのルール
 - 例えば「104811」というIDが入力された場合、COPCファイルのURLは
-  `https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/104811.copc.laz`
+  `https://gsvrg.ipri.aist.go.jp/3ddb-pds/copc/104811.copc.laz`
   の形式で組み立てて利用した。

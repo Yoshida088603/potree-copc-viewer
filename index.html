@@ -115,7 +115,7 @@
 
 		// すべてのID/URLでCOPCを同時表示
 		ids.forEach((id, idx) => {
-			let path = id.match(/^https?:\/\//) ? id : `https://gsrt.digiarc.aist.go.jp/3ddb-pds/copc/${id}.copc.laz`;
+			let path = id.match(/^https?:\/\//) ? id : `https://gsvrg.ipri.aist.go.jp/3ddb-pds/copc/${id}.copc.laz`;
 			let name = id;
 			Potree.loadPointCloud(path, name, function(e){
 				window.viewer.scene.addPointCloud(e.pointcloud);
